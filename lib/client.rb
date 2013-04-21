@@ -8,7 +8,7 @@ module Celluloid
       #include ConnectionMixin
       #include RequestMixin
       def url
-        "http://localhost:9123/timeinfo"
+        "http://reeltalk.celluloid.io/chat"
       end
     end
   end
@@ -19,7 +19,7 @@ class MozWeb
   include Celluloid::Logger
 
   def initialize
-    @socket = Celluloid::IO::TCPSocket.new('0.0.0.0', '9123')
+    @socket = Celluloid::IO::TCPSocket.new('reeltalk.celluloid.io', '80')
   end
 
   def start
@@ -28,6 +28,7 @@ class MozWeb
     handler.onopen { |message| info("websocket opened") }
     handler.onclose { |message| info("websocket closed") }
     handler.start
+    handler.text '{"action": "message", "message": "hello from ruby"}'
     loop { handler.parse(@socket.readpartial(100)) }
   end
 end
